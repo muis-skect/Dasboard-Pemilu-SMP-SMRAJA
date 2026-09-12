@@ -4,14 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistem E-Voting Pemira</title>
-  <!-- Library Kamera Barcode / QR Code Scanner -->
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
   <style>
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #eef2f5; padding: 20px; margin: 0; }
-    .card { background: white; max-width: 500px; margin: 30px auto; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .card { background: white; max-width: 500px; margin: 20px auto; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
     h2 { color: #333; margin-bottom: 20px; }
-    .step-indicator { font-weight: bold; color: #0275d8; font-size: 1.1em; background: #e7f1ff; padding: 10px; border-radius: 8px; margin-bottom: 15px; }
+    .step-indicator { font-weight: bold; color: #0275d8; font-size: 1.1em; background: #e7f1ff; padding: 12px; border-radius: 8px; margin-bottom: 15px; }
     #reader { width: 100%; border-radius: 8px; overflow: hidden; margin-top: 15px; }
+    
+    /* Style untuk Tombol Pilihan Kandidat */
+    .option-container { display: none; flex-direction: column; gap: 12px; margin-top: 20px; }
+    .btn-option { background: #007bff; color: white; border: none; padding: 14px 20px; font-size: 1.05em; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+    .btn-option:hover { background: #0056b3; }
+    
     .info-box { margin-top: 20px; text-align: left; background: #f8f9fa; padding: 12px 15px; border-radius: 8px; font-size: 0.95em; }
     .status-box { margin-top: 15px; padding: 12px; border-radius: 8px; font-weight: bold; display: none; }
     .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
@@ -22,9 +27,24 @@
 
   <div class="card">
     <h2>E-Voting Pemira Online</h2>
-    <div id="stepText" class="step-indicator">Langkah 1: Scan Barcode / QR Code Pemilih Anda</div>
+    <div id="stepText" class="step-indicator">Langkah 1: Scan QR Code Pemilih Anda</div>
     
+    <!-- Area Kamera Scanner -->
     <div id="reader"></div>
+
+    <!-- Area Menu Pilihan Paslon (Muncul setelah scan QR Paslon) -->
+    <div id="ketuaOptions" class="option-container">
+      <button class="btn-option" onclick="selectKetua('Paslon 01')">Paslon 01 - Ketua A & Wakil A</button>
+      <button class="btn-option" onclick="selectKetua('Paslon 02')">Paslon 02 - Ketua B & Wakil B</button>
+      <button class="btn-option" onclick="selectKetua('Paslon 03')">Paslon 03 - Ketua C & Wakil C</button>
+    </div>
+
+    <!-- Area Menu Pilihan DPS (Muncul setelah scan QR DPS) -->
+    <div id="dpsOptions" class="option-container">
+      <button class="btn-option" style="background:#28a745;" onclick="selectDPS('DPS 01')">Kandidat DPS 01</button>
+      <button class="btn-option" style="background:#28a745;" onclick="selectDPS('DPS 02')">Kandidat DPS 02</button>
+      <button class="btn-option" style="background:#28a745;" onclick="selectDPS('DPS 03')">Kandidat DPS 03</button>
+    </div>
 
     <div class="info-box">
       <p style="margin: 5px 0;"><b>ID Pemilih:</b> <span id="valPemilih" style="color:#0275d8;">-</span></p>
@@ -36,7 +56,6 @@
   </div>
 
   <script>
-    // URL Web App Google Apps Script Anda
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbydZY0nCg1PeUKZacSPdjI8SOH6MwdLD8CKoc7_7ku5AWOJ_hQMBLdl1g6CqMeLw3GOGQ/exec";
 
     let step = 1;
@@ -52,28 +71,46 @@
 
     function onScanSuccess(decodedText) {
       if (step === 1) {
+        // Step 1: Scan QR Kartu Pemilih
         voteData.idPemilih = decodedText;
         document.getElementById("valPemilih").innerText = decodedText;
         step = 2;
-        document.getElementById("stepText").innerText = "Langkah 2: Scan Barcode Pilihan Ketua & Wakil Ketua";
+        document.getElementById("stepText").innerText = "Langkah 2: Scan QR Code Kategori Ketua & Wakil";
       } else if (step === 2) {
-        voteData.pilihanKetua = decodedText;
-        document.getElementById("valKetua").innerText = decodedText;
-        step = 3;
-        document.getElementById("stepText").innerText = "Langkah 3: Scan Barcode Pilihan DPS";
+        // Step 2: Scan 1 QR Utama Ketua (Teks QR bebas, misal: 'QR_KETUA')
+        document.getElementById("reader").style.display = "none"; // Sembunyikan kamera sementara
+        document.getElementById("ketuaOptions").style.display = "flex"; // Tampilkan pilihan paslon
+        document.getElementById("stepText").innerText = "Silakan Pilih Paslon Ketua & Wakil di Layar";
       } else if (step === 3) {
-        voteData.pilihanDPS = decodedText;
-        document.getElementById("valDPS").innerText = decodedText;
-        step = 4;
-        
-        // Matikan Kamera
-        if(html5QrcodeScanner) {
-          html5QrcodeScanner.clear();
-        }
-        
-        document.getElementById("stepText").innerText = "Mengirim Suara ke Database...";
-        submitVote();
+        // Step 3: Scan 1 QR Utama DPS (Teks QR bebas, misal: 'QR_DPS')
+        document.getElementById("reader").style.display = "none"; // Sembunyikan kamera
+        document.getElementById("dpsOptions").style.display = "flex"; // Tampilkan pilihan DPS
+        document.getElementById("stepText").innerText = "Silakan Pilih Kandidat DPS di Layar";
       }
+    }
+
+    // Fungsi Saat Pemilih Menekan Tombol Paslon Ketua
+    function selectKetua(pilihan) {
+      voteData.pilihanKetua = pilihan;
+      document.getElementById("valKetua").innerText = pilihan;
+      document.getElementById("ketuaOptions").style.display = "none";
+      document.getElementById("reader").style.display = "block"; // Tampilkan kamera kembali
+      step = 3;
+      document.getElementById("stepText").innerText = "Langkah 3: Scan QR Code Kategori DPS";
+    }
+
+    // Fungsi Saat Pemilih Menekan Tombol DPS
+    function selectDPS(pilihan) {
+      voteData.pilihanDPS = pilihan;
+      document.getElementById("valDPS").innerText = pilihan;
+      document.getElementById("dpsOptions").style.display = "none";
+      
+      if(html5QrcodeScanner) {
+        html5QrcodeScanner.clear(); // Matikan kamera
+      }
+      
+      document.getElementById("stepText").innerText = "Mengirim Suara ke Database...";
+      submitVote();
     }
 
     function submitVote() {
@@ -85,7 +122,7 @@
       .then(response => {
         if(response.status === "success") {
           showStatus("Suara Anda berhasil disimpan! Terima kasih.", true);
-          setTimeout(() => { location.reload(); }, 3000); // Reset ke awal setelah 3 detik
+          setTimeout(() => { location.reload(); }, 3000);
         } else {
           showStatus("Gagal: " + response.message, false);
           setTimeout(() => { location.reload(); }, 4000);
@@ -97,7 +134,6 @@
       });
     }
 
-    // Jalankan Scanner Kamera
     html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
     html5QrcodeScanner.render(onScanSuccess);
   </script>
