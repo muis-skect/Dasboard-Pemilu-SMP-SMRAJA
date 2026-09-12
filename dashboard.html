@@ -4,37 +4,74 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard Real-Time Hasil Pemira</title>
-  <!-- Library Grafik Chart.js -->
+  <!-- Library Chart.js & Datalabels Plugin untuk Persentase -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
   <style>
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; margin: 0; padding: 20px; text-align: center; }
-    h1 { color: #333; margin-bottom: 5px; }
-    p { color: #666; font-size: 0.95em; }
-    .container { display: flex; flex-direction: column; align-items: center; gap: 25px; margin-top: 25px; }
-    .chart-box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); width: 90%; max-width: 800px; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; text-align: center; }
+    h1 { color: #1a252f; margin-bottom: 5px; }
+    p { color: #666; font-size: 0.95em; margin-bottom: 30px; }
+    
+    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 25px; max-width: 1200px; margin: 0 auto; }
+    .card { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 6px 18px rgba(0,0,0,0.06); }
+    .card h2 { color: #2c3e50; margin-top: 0; margin-bottom: 20px; font-size: 1.3em; border-bottom: 2px solid #eef2f5; padding-bottom: 10px; }
+    
+    /* Area Foto Kandidat */
+    .paslon-photos { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+    .photo-item { text-align: center; width: 100px; }
+    .photo-item img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #007bff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    .photo-item span { display: block; font-size: 0.85em; font-weight: bold; margin-top: 5px; color: #333; }
+    
+    /* Chart Container */
+    .chart-container { position: relative; width: 100%; max-width: 320px; margin: 0 auto; }
   </style>
 </head>
 <body>
 
   <h1>Live Count Hasil Pemilihan Online</h1>
-  <p>Data diperbarui secara otomatis setiap 5 detik dari Google Sheets</p>
+  <p>Data grafik diperbarui secara otomatis dari Google Sheets</p>
 
-  <div class="container">
-    <!-- Grafik Paslon Ketua -->
-    <div class="chart-box">
-      <h3>Perolehan Suara Ketua & Wakil Ketua</h3>
-      <canvas id="chartKetua"></canvas>
+  <div class="dashboard-grid">
+    <!-- Card Grafik Paslon Ketua -->
+    <div class="card">
+      <h2>Perolehan Suara Ketua & Wakil Ketua</h2>
+      
+      <!-- Deretan Foto Paslon (Ganti URL Gambar Sesuai Keinginan) -->
+      <div class="paslon-photos">
+        <div class="photo-item">
+          <img src="https://via.placeholder.com/150/007bff/ffffff?text=Paslon+01" alt="Paslon 01">
+          <span>Paslon 01</span>
+        </div>
+        <div class="photo-item">
+          <img src="https://via.placeholder.com/150/ffc107/ffffff?text=Paslon+02" alt="Paslon 02">
+          <span>Paslon 02</span>
+        </div>
+        <div class="photo-item">
+          <img src="https://via.placeholder.com/150/dc3545/ffffff?text=Paslon+03" alt="Paslon 03">
+          <span>Paslon 03</span>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <canvas id="chartKetua"></canvas>
+      </div>
     </div>
 
-    <!-- Grafik DPS -->
-    <div class="chart-box">
-      <h3>Perolehan Suara DPS (Dewan Perwakilan Siswa)</h3>
-      <canvas id="chartDPS"></canvas>
+    <!-- Card Grafik DPS -->
+    <div class="card">
+      <h2>Perolehan Suara DPS (Dewan Perwakilan Siswa)</h2>
+      <div class="chart-container">
+        <canvas id="chartDPS"></canvas>
+      </div>
     </div>
   </div>
 
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbydZY0nCg1PeUKZacSPdjI8SOH6MwdLD8CKoc7_7ku5AWOJ_hQMBLdl1g6CqMeLw3GOGQ/exec";
+    
+    // Register Plugin Datalabels untuk Menampilkan %
+    Chart.register(ChartDataLabels);
+
     let chartKetuaObj = null;
     let chartDPSObj = null;
 
@@ -54,7 +91,6 @@
       let countKetua = {};
       let countDPS = {};
 
-      // Iterasi data hasil suara (mulai baris ke-1 untuk melompati header)
       for (let i = 1; i < rows.length; i++) {
         let ketua = rows[i][2]; // Kolom C
         let dps = rows[i][3];   // Kolom D
@@ -63,12 +99,11 @@
         if(dps) countDPS[dps] = (countDPS[dps] || 0) + 1;
       }
 
-      // Render Grafik
-      renderChart('chartKetua', chartKetuaObj, countKetua, (obj) => chartKetuaObj = obj, 'Ketua & Wakil', '#007bff');
-      renderChart('chartDPS', chartDPSObj, countDPS, (obj) => chartDPSObj = obj, 'DPS', '#28a745');
+      renderPieChart('chartKetua', chartKetuaObj, countKetua, (obj) => chartKetuaObj = obj, ['#007bff', '#ffc107', '#dc3545', '#17a2b8', '#6c757d']);
+      renderPieChart('chartDPS', chartDPSObj, countDPS, (obj) => chartDPSObj = obj, ['#28a745', '#fd7e14', '#6f42c1', '#e83e8c', '#20c997', '#ffc107', '#007bff', '#17a2b8']);
     }
 
-    function renderChart(canvasId, chartInstance, dataObj, setInstance, labelName, barColor) {
+    function renderPieChart(canvasId, chartInstance, dataObj, setInstance, colors) {
       const labels = Object.keys(dataObj);
       const values = Object.values(dataObj);
 
@@ -79,30 +114,36 @@
       } else {
         const ctx = document.getElementById(canvasId).getContext('2d');
         const newChart = new Chart(ctx, {
-          type: 'bar',
+          type: 'pie', // Menggunakan tipe grafik lingkaran (Pie Chart)
           data: {
             labels: labels,
             datasets: [{
-              label: 'Jumlah Suara ' + labelName,
               data: values,
-              backgroundColor: barColor
+              backgroundColor: colors
             }]
           },
-          options: { 
-            responsive: true, 
-            scales: { 
-              y: { 
-                beginAtZero: true, 
-                ticks: { stepSize: 1 } 
-              } 
-            } 
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: 'bottom' },
+              datalabels: {
+                color: '#fff',
+                font: { weight: 'bold', size: 13 },
+                formatter: (value, ctx) => {
+                  let sum = 0;
+                  let dataArr = ctx.chart.data.datasets[0].data;
+                  dataArr.map(data => { sum += data; });
+                  let percentage = (value * 100 / sum).toFixed(1) + "%";
+                  return percentage;
+                }
+              }
+            }
           }
         });
         setInstance(newChart);
       }
     }
 
-    // Ambil data pertama kali & jalankan auto-refresh tiap 5 detik
     fetchData();
     setInterval(fetchData, 5000);
   </script>
