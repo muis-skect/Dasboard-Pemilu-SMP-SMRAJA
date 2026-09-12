@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Real-time Grafik Pemilihan</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h2>Hasil Pemilihan Ketua & Wakil Ketua</h2>
+  <canvas id="chartKetua" width="400" height="200"></canvas>
+
+  <script>
+    const webAppUrl = "URL_WEB_APP_GOOGLE_SCRIPT_ANDA";
+
+    async function loadData() {
+      const response = await fetch(webAppUrl);
+      const data = await response.json();
+      
+      // Hitung perolehan suara (contoh sederhana)
+      let rekap = {};
+      for (let i = 1; i < data.length; i++) {
+        let pilihan = data[i][2]; // Kolom C: Pilihan_Ketua
+        rekap[pilihan] = (rekap[pilihan] || 0) + 1;
+      }
+
+      // Render Grafik
+      new Chart(document.getElementById('chartKetua'), {
+        type: 'bar',
+        data: {
+          labels: Object.keys(rekap),
+          datasets: [{
+            label: 'Jumlah Suara',
+            data: Object.values(rekap),
+            backgroundColor: ['#36A2EB', '#FF6384', '#FFCE56']
+          }]
+        }
+      });
+    }
+
+    loadData();
+    setInterval(loadData, 5000); // Refresh otomatis setiap 5 detik
+  </script>
+</body>
+</html>
