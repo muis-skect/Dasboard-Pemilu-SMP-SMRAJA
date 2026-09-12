@@ -11,17 +11,17 @@
     h1 { color: #1a252f; margin-bottom: 5px; }
     p { color: #666; font-size: 0.95em; margin-bottom: 30px; }
     
-    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 25px; max-width: 1200px; margin: 0 auto; }
+    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 25px; max-width: 1200px; margin: 0 auto; }
     .card { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 6px 18px rgba(0,0,0,0.06); }
     .card h2 { color: #2c3e50; margin-top: 0; margin-bottom: 20px; font-size: 1.3em; border-bottom: 2px solid #eef2f5; padding-bottom: 10px; }
     
-    /* Area Foto Kandidat */
-    .paslon-photos { display: flex; justify-content: center; gap: 20px; margin-bottom: 25px; flex-wrap: wrap; }
-    .photo-item { text-align: center; width: 110px; }
-    .photo-item img { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 3px solid #007bff; box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
-    .photo-item span { display: block; font-size: 0.9em; font-weight: bold; margin-top: 8px; color: #333; }
+    /* Display Kartu Kandidat */
+    .paslon-photos { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
+    .photo-item { text-align: center; width: 100px; }
+    .photo-item img { width: 100px; height: 130px; border-radius: 8px; object-fit: contain; border: 2px solid #007bff; background: #fff; box-shadow: 0 3px 8px rgba(0,0,0,0.12); }
+    .photo-item span { display: block; font-size: 0.85em; font-weight: bold; margin-top: 6px; color: #333; }
     
-    .chart-container { position: relative; width: 100%; max-width: 320px; margin: 0 auto; }
+    .chart-container { position: relative; width: 100%; max-width: 330px; margin: 0 auto; }
   </style>
 </head>
 <body>
@@ -34,7 +34,6 @@
     <div class="card">
       <h2>Perolehan Suara Ketua & Wakil Ketua</h2>
       
-      <!-- Foto Paslon Asli dari GitHub -->
       <div class="paslon-photos">
         <div class="photo-item">
           <img src="Paslon%20Kelas%2001.png" alt="Paslon 01">
@@ -57,7 +56,7 @@
 
     <!-- Card Grafik DPS -->
     <div class="card">
-      <h2>Perolehan Suara DPS (Dewan Perwakilan Siswa)</h2>
+      <h2>Perolehan Suara DPS</h2>
       <div class="chart-container">
         <canvas id="chartDPS"></canvas>
       </div>
