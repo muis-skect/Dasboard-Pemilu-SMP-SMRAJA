@@ -3,25 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistem E-Voting Pemira</title>
+  <title>Sistem E-Voting Pemira Online</title>
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
   <style>
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #eef2f5; padding: 20px; margin: 0; }
-    .card { background: white; max-width: 500px; margin: 20px auto; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-    h2 { color: #333; margin-bottom: 20px; }
-    .step-indicator { font-weight: bold; color: #0275d8; font-size: 1.1em; background: #e7f1ff; padding: 12px; border-radius: 8px; margin-bottom: 15px; }
-    #reader { width: 100%; border-radius: 8px; overflow: hidden; margin-top: 15px; }
+    * { box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #eef2f5; padding: 20px 10px; margin: 0; }
+    .card { background: white; max-width: 520px; margin: 10px auto; padding: 25px 20px; border-radius: 16px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+    h2 { color: #1a252f; margin-top: 0; margin-bottom: 15px; font-size: 1.5em; }
+    .step-indicator { font-weight: bold; color: #0275d8; font-size: 1.05em; background: #e7f1ff; padding: 12px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #b8daff; }
     
-    .option-container { display: none; flex-direction: column; gap: 10px; margin-top: 15px; max-height: 350px; overflow-y: auto; padding-right: 5px; }
+    #reader { width: 100%; border-radius: 12px; overflow: hidden; margin-top: 15px; border: 2px dashed #0275d8; }
+    
+    .option-container { display: none; flex-direction: column; gap: 12px; margin-top: 15px; max-height: 400px; overflow-y: auto; padding-right: 5px; }
     .grid-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     
-    .btn-option { background: #007bff; color: white; border: none; padding: 12px 15px; font-size: 1em; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.2s; }
-    .btn-option:hover { background: #0056b3; }
-    .btn-dps { background: #28a745; }
+    .btn-option { 
+      background: #007bff; 
+      color: white; 
+      border: none; 
+      padding: 12px 15px; 
+      font-size: 1em; 
+      font-weight: bold; 
+      border-radius: 10px; 
+      cursor: pointer; 
+      transition: all 0.2s ease;
+      display: flex; 
+      align-items: center; 
+      justify-content: flex-start;
+      gap: 15px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    }
+    .btn-option:hover { background: #0056b3; transform: translateY(-2px); }
+    .btn-option img { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 2px solid #ffffff; background: #fff; flex-shrink: 0; }
+    
+    .btn-dps { background: #28a745; justify-content: center; text-align: center; }
     .btn-dps:hover { background: #1e7e34; }
     
-    .info-box { margin-top: 20px; text-align: left; background: #f8f9fa; padding: 12px 15px; border-radius: 8px; font-size: 0.95em; }
-    .status-box { margin-top: 15px; padding: 12px; border-radius: 8px; font-weight: bold; display: none; }
+    .info-box { margin-top: 20px; text-align: left; background: #f8f9fa; padding: 15px; border-radius: 10px; font-size: 0.95em; border-left: 4px solid #007bff; }
+    .status-box { margin-top: 15px; padding: 14px; border-radius: 10px; font-weight: bold; display: none; font-size: 0.95em; }
     .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
     .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
   </style>
@@ -35,16 +54,25 @@
     <!-- Area Kamera Scanner -->
     <div id="reader"></div>
 
-    <!-- 1. Menu Pilihan Ketua & Wakil -->
+    <!-- 1. Menu Pilihan Ketua & Wakil (Lengkap dengan Foto Paslon) -->
     <div id="ketuaOptions" class="option-container">
-      <button class="btn-option" onclick="selectKetua('Paslon 01')">Paslon 01 - Ketua A & Wakil A</button>
-      <button class="btn-option" onclick="selectKetua('Paslon 02')">Paslon 02 - Ketua B & Wakil B</button>
-      <button class="btn-option" onclick="selectKetua('Paslon 03')">Paslon 03 - Ketua C & Wakil C</button>
+      <button class="btn-option" onclick="selectKetua('Paslon 01')">
+        <img src="Paslon%20Kelas%2001.png" alt="Paslon 01">
+        <span><b>Paslon 01</b><br><small style="font-weight:normal;">Ketua & Wakil 01</small></span>
+      </button>
+      <button class="btn-option" onclick="selectKetua('Paslon 02')">
+        <img src="Paslon%20Kelas%2002.png" alt="Paslon 02">
+        <span><b>Paslon 02</b><br><small style="font-weight:normal;">Ketua & Wakil 02</small></span>
+      </button>
+      <button class="btn-option" onclick="selectKetua('Paslon 03')">
+        <img src="Paslon%20Kelas%2003.png" alt="Paslon 03">
+        <span><b>Paslon 03</b><br><small style="font-weight:normal;">Ketua & Wakil 03</small></span>
+      </button>
     </div>
 
-    <!-- 2. Menu DPS Kelas VII (6 DPS) -->
+    <!-- 2. Menu DPS Kelas VII (Khusus Nomor Urut 1 - 150) -->
     <div id="dpsKandidat7" class="option-container">
-      <p style="margin:0 0 10px 0; font-weight:bold; color:#28a745;">Pilih Kandidat DPS Kelas VII:</p>
+      <p style="margin:0 0 10px 0; font-weight:bold; color:#28a745;">Pilih 1 Kandidat DPS Kelas VII:</p>
       <div class="grid-options">
         <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VII - 01')">DPS VII - 01</button>
         <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VII - 02')">DPS VII - 02</button>
@@ -55,9 +83,9 @@
       </div>
     </div>
 
-    <!-- 3. Menu DPS Kelas VIII (10 DPS) -->
+    <!-- 3. Menu DPS Kelas VIII (Khusus Nomor Urut 151 - 310) -->
     <div id="dpsKandidat8" class="option-container">
-      <p style="margin:0 0 10px 0; font-weight:bold; color:#28a745;">Pilih Kandidat DPS Kelas VIII:</p>
+      <p style="margin:0 0 10px 0; font-weight:bold; color:#28a745;">Pilih 1 Kandidat DPS Kelas VIII:</p>
       <div class="grid-options">
         <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VIII - 01')">DPS VIII - 01</button>
         <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VIII - 02')">DPS VIII - 02</button>
@@ -72,9 +100,9 @@
       </div>
     </div>
 
-    <!-- 4. Menu DPS Kelas IX (10 DPS) -->
+    <!-- 4. Menu DPS Kelas IX (Khusus Nomor Urut 311 - 490) -->
     <div id="dpsKandidat9" class="option-container">
-      <p style="margin:0 0 10px 0; font-weight:bold; color:#28a745;">Pilih Kandidat DPS Kelas IX:</p>
+      <p style="margin:0 0 10px 0; font-weight:bold; color:#28a745;">Pilih 1 Kandidat DPS Kelas IX:</p>
       <div class="grid-options">
         <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas IX - 01')">DPS IX - 01</button>
         <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas IX - 02')">DPS IX - 02</button>
@@ -89,22 +117,24 @@
       </div>
     </div>
 
-    <!-- Ringkasan Info -->
+    <!-- Ringkasan Suara Pemilih -->
     <div class="info-box">
-      <p style="margin: 5px 0;"><b>ID Pemilih:</b> <span id="valPemilih" style="color:#0275d8;">-</span></p>
-      <p style="margin: 5px 0;"><b>Pilihan Ketua:</b> <span id="valKetua" style="color:#0275d8;">-</span></p>
-      <p style="margin: 5px 0;"><b>Pilihan DPS:</b> <span id="valDPS" style="color:#0275d8;">-</span></p>
+      <p style="margin: 4px 0;"><b>ID Pemilih:</b> <span id="valPemilih" style="color:#0275d8; font-weight:bold;">-</span></p>
+      <p style="margin: 4px 0;"><b>Pilihan Ketua:</b> <span id="valKetua" style="color:#0275d8; font-weight:bold;">-</span></p>
+      <p style="margin: 4px 0;"><b>Pilihan DPS:</b> <span id="valDPS" style="color:#0275d8; font-weight:bold;">-</span></p>
     </div>
 
+    <!-- Pesan Status Error / Sukses -->
     <div id="statusBox" class="status-box"></div>
   </div>
 
   <script>
+    // URL Web App Google Apps Script milikmu
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbydZY0nCg1PeUKZacSPdjI8SOH6MwdLD8CKoc7_7ku5AWOJ_hQMBLdl1g6CqMeLw3GOGQ/exec";
 
     let step = 1;
     let voteData = { idPemilih: "", pilihanKetua: "", pilihanDPS: "" };
-    let voterNumber = 0; // Menampung angka nomor urut pemilih
+    let voterNumber = 0; 
     let html5QrcodeScanner;
 
     function hideAllMenus() {
@@ -123,10 +153,11 @@
 
     function onScanSuccess(decodedText) {
       if (step === 1) {
+        // Langkah 1: Simpan ID Pemilih
         voteData.idPemilih = decodedText;
         document.getElementById("valPemilih").innerText = decodedText;
         
-        // Ekstrak angka dari ID Pemilih (misal: "P-045" -> 45)
+        // Ambil angka dari teks ID Pemilih (contoh: "P-045" -> 45)
         let matched = decodedText.match(/\d+/);
         if (matched) {
           voterNumber = parseInt(matched[0], 10);
@@ -137,13 +168,14 @@
         step = 2;
         document.getElementById("stepText").innerText = "Langkah 2: Scan QR Code Kategori Ketua & Wakil";
       } else if (step === 2) {
+        // Langkah 2: Buka Pilihan Ketua
         document.getElementById("reader").style.display = "none";
         document.getElementById("ketuaOptions").style.display = "flex";
         document.getElementById("stepText").innerText = "Silakan Pilih Paslon Ketua & Wakil";
       } else if (step === 3) {
+        // Langkah 3: Buka Pilihan DPS Berdasarkan Nomor Urut
         document.getElementById("reader").style.display = "none";
         
-        // Logika Otomatis Menentukan Kelas DPS Berdasarkan Nomor Urut
         if (voterNumber >= 1 && voterNumber <= 150) {
           document.getElementById("dpsKandidat7").style.display = "flex";
           document.getElementById("stepText").innerText = "Silakan Pilih DPS Kelas VII";
@@ -154,7 +186,7 @@
           document.getElementById("dpsKandidat9").style.display = "flex";
           document.getElementById("stepText").innerText = "Silakan Pilih DPS Kelas IX";
         } else {
-          // Jika nomor urut di luar rentang, tampilkan Kelas VII sebagai default
+          // Default jika nomor urut tidak terdeteksi dalam rentang
           document.getElementById("dpsKandidat7").style.display = "flex";
           document.getElementById("stepText").innerText = "Silakan Pilih DPS";
         }
@@ -204,6 +236,7 @@
       });
     }
 
+    // Inisialisasi Scanner Kamera
     html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
     html5QrcodeScanner.render(onScanSuccess);
   </script>
