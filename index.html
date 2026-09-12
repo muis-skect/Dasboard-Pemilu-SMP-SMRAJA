@@ -8,37 +8,51 @@
   <style>
     * { box-sizing: border-box; }
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #eef2f5; padding: 20px 10px; margin: 0; }
-    .card { background: white; max-width: 520px; margin: 10px auto; padding: 25px 20px; border-radius: 16px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+    .card { background: white; max-width: 600px; margin: 10px auto; padding: 25px 20px; border-radius: 16px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
     h2 { color: #1a252f; margin-top: 0; margin-bottom: 15px; font-size: 1.5em; }
     .step-indicator { font-weight: bold; color: #0275d8; font-size: 1.05em; background: #e7f1ff; padding: 12px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #b8daff; }
     
     #reader { width: 100%; border-radius: 12px; overflow: hidden; margin-top: 15px; border: 2px dashed #0275d8; }
     
-    .option-container { display: none; flex-direction: column; gap: 12px; margin-top: 15px; max-height: 400px; overflow-y: auto; padding-right: 5px; }
-    .grid-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .option-container { display: none; flex-direction: column; gap: 12px; margin-top: 15px; max-height: 480px; overflow-y: auto; padding-right: 5px; }
     
-    .btn-option { 
-      background: #007bff; 
-      color: white; 
-      border: none; 
-      padding: 12px 15px; 
-      font-size: 1em; 
-      font-weight: bold; 
-      border-radius: 10px; 
-      cursor: pointer; 
+    /* Grid Pilihan Kartu DPS & Paslon */
+    .grid-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+    
+    .btn-card {
+      background: #ffffff;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 10px;
+      cursor: pointer;
       transition: all 0.2s ease;
-      display: flex; 
-      align-items: center; 
-      justify-content: flex-start;
-      gap: 15px;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.05);
     }
-    .btn-option:hover { background: #0056b3; transform: translateY(-2px); }
-    .btn-option img { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 2px solid #ffffff; background: #fff; flex-shrink: 0; }
+    .btn-card:hover {
+      border-color: #28a745;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 14px rgba(40, 167, 69, 0.2);
+    }
     
-    .btn-dps { background: #28a745; justify-content: center; text-align: center; }
-    .btn-dps:hover { background: #1e7e34; }
-    
+    /* Foto Kartu Portrait Utuh */
+    .btn-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: contain;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid #ddd;
+    }
+    .btn-card span {
+      margin-top: 8px;
+      font-size: 0.95em;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+
     .info-box { margin-top: 20px; text-align: left; background: #f8f9fa; padding: 15px; border-radius: 10px; font-size: 0.95em; border-left: 4px solid #007bff; }
     .status-box { margin-top: 15px; padding: 14px; border-radius: 10px; font-weight: bold; display: none; font-size: 0.95em; }
     .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
@@ -54,32 +68,52 @@
     <!-- Area Kamera Scanner -->
     <div id="reader"></div>
 
-    <!-- 1. Menu Pilihan Ketua & Wakil (Lengkap dengan Foto Paslon) -->
+    <!-- 1. Menu Pilihan Ketua & Wakil -->
     <div id="ketuaOptions" class="option-container">
-      <button class="btn-option" onclick="selectKetua('Paslon 01')">
-        <img src="Paslon%20Kelas%2001.png" alt="Paslon 01">
-        <span><b>Paslon 01</b><br><small style="font-weight:normal;">JECHONIA ADRIAN SIMORANGKIR & ANDRYCA SIMON LUMBAN GAOL</small></span>
-      </button>
-      <button class="btn-option" onclick="selectKetua('Paslon 02')">
-        <img src="Paslon%20Kelas%2002.png" alt="Paslon 02">
-        <span><b>Paslon 02</b><br><small style="font-weight:normal;">LOUISA CHENDRIADY & JESKIEL ALFREDO SITINDAON</small></span>
-      </button>
-      <button class="btn-option" onclick="selectKetua('Paslon 03')">
-        <img src="Paslon%20Kelas%2003.png" alt="Paslon 03">
-        <span><b>Paslon 03</b><br><small style="font-weight:normal;">MIKHA FEBRIAN SIANTURI & AZHAR AFIQAH CAHAYA</small></span>
-      </button>
+      <div class="grid-options">
+        <button class="btn-card" onclick="selectKetua('Paslon 01')">
+          <img src="Paslon%20Kelas%2001.png" alt="Paslon 01">
+          <span>Paslon 01</span>
+        </button>
+        <button class="btn-card" onclick="selectKetua('Paslon 02')">
+          <img src="Paslon%20Kelas%2002.png" alt="Paslon 02">
+          <span>Paslon 02</span>
+        </button>
+        <button class="btn-card" onclick="selectKetua('Paslon 03')">
+          <img src="Paslon%20Kelas%2003.png" alt="Paslon 03">
+          <span>Paslon 03</span>
+        </button>
+      </div>
     </div>
 
     <!-- 2. Menu DPS Kelas VII (Khusus Nomor Urut 1 - 150) -->
     <div id="dpsKandidat7" class="option-container">
       <p style="margin:0 0 10px 0; font-weight:bold; color:#28a745;">Pilih 1 Kandidat DPS Kelas VII:</p>
       <div class="grid-options">
-        <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VII - 01')">DPS VII - 01</button>
-        <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VII - 02')">DPS VII - 02</button>
-        <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VII - 03')">DPS VII - 03</button>
-        <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VII - 04')">DPS VII - 04</button>
-        <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VII - 05')">DPS VII - 05</button>
-        <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VII - 06')">DPS VII - 06</button>
+        <button class="btn-card" onclick="selectDPS('DPS Kelas VII - 01')">
+          <img src="DPS_7_01.png" onerror="this.src='https://via.placeholder.com/140x180?text=DPS+VII+01'" alt="DPS VII - 01">
+          <span>DPS VII - 01</span>
+        </button>
+        <button class="btn-card" onclick="selectDPS('DPS Kelas VII - 02')">
+          <img src="DPS_7_02.png" onerror="this.src='https://via.placeholder.com/140x180?text=DPS+VII+02'" alt="DPS VII - 02">
+          <span>DPS VII - 02</span>
+        </button>
+        <button class="btn-card" onclick="selectDPS('DPS Kelas VII - 03')">
+          <img src="DPS_7_03.png" onerror="this.src='https://via.placeholder.com/140x180?text=DPS+VII+03'" alt="DPS VII - 03">
+          <span>DPS VII - 03</span>
+        </button>
+        <button class="btn-card" onclick="selectDPS('DPS Kelas VII - 04')">
+          <img src="DPS_7_04.png" onerror="this.src='https://via.placeholder.com/140x180?text=DPS+VII+04'" alt="DPS VII - 04">
+          <span>DPS VII - 04</span>
+        </button>
+        <button class="btn-card" onclick="selectDPS('DPS Kelas VII - 05')">
+          <img src="DPS_7_05.png" onerror="this.src='https://via.placeholder.com/140x180?text=DPS+VII+05'" alt="DPS VII - 05">
+          <span>DPS VII - 05</span>
+        </button>
+        <button class="btn-card" onclick="selectDPS('DPS Kelas VII - 06')">
+          <img src="DPS_7_06.png" onerror="this.src='https://via.placeholder.com/140x180?text=DPS+VII+06'" alt="DPS VII - 06">
+          <span>DPS VII - 06</span>
+        </button>
       </div>
     </div>
 
@@ -87,16 +121,16 @@
     <div id="dpsKandidat8" class="option-container">
       <p style="margin:0 0 10px 0; font-weight:bold; color:#28a745;">Pilih 1 Kandidat DPS Kelas VIII:</p>
       <div class="grid-options">
-        <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VIII - 01')">DPS VIII - 01</button>
-        <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VIII - 02')">DPS VIII - 02</button>
-        <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VIII - 03')">DPS VIII - 03</button>
-        <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VIII - 04')">DPS VIII - 04</button>
-        <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VIII - 05')">DPS VIII - 05</button>
-        <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VIII - 06')">DPS VIII - 06</button>
-        <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VIII - 07')">DPS VIII - 07</button>
-        <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VIII - 08')">DPS VIII - 08</button>
-        <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VIII - 09')">DPS VIII - 09</button>
-        <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VIII - 10')">DPS VIII - 10</button>
+        <button class="btn-card" onclick="selectDPS('DPS Kelas VIII - 01')"><img src="DPS_8_01.png" onerror="this.src='https://via.placeholder.com/140x180?text=DPS+VIII+01'"><span>DPS VIII - 01</span></button>
+        <button class="btn-card" onclick="selectDPS('DPS Kelas VIII - 02')"><img src="DPS_8_02.png" onerror="this.src='https://via.placeholder.com/140x180?text=DPS+VIII+02'"><span>DPS VIII - 02</span></button>
+        <button class="btn-card" onclick="selectDPS('DPS Kelas VIII - 03')"><img src="DPS_8_03.png" onerror="this.src='https://via.placeholder.com/140x180?text=DPS+VIII+03'"><span>DPS VIII - 03</span></button>
+        <button class="btn-card" onclick="selectDPS('DPS Kelas VIII - 04')"><img src="DPS_8_04.png" onerror="this.src='https://via.placeholder.com/140x180?text=DPS+VIII+04'"><span>DPS VIII - 04</span></button>
+        <button class="btn-card" onclick="selectDPS('DPS Kelas VIII - 05')"><img src="DPS_8_05.png" onerror="this.src='https://via.placeholder.com/140x180?text=DPS+VIII+05'"><span>DPS VIII - 05</span></button>
+        <button class="btn-card" onclick="selectDPS('DPS Kelas VIII - 06')"><img src="DPS_8_06.png" onerror="this.src='https://via.placeholder.com/140x180?text=DPS+VIII+06'"><span>DPS VIII - 06</span></button>
+        <button class="btn-card" onclick="selectDPS('DPS Kelas VIII - 07')"><img src="DPS_8_07.png" onerror="this.src='https://via.placeholder.com/140x180?text=DPS+VIII+07'"><span>DPS VIII - 07</span></button>
+        <button class="btn-card" onclick="selectDPS('DPS Kelas VIII - 08')"><img src="DPS_8_08.png" onerror="this.src='https://via.placeholder.com/140x180?text=DPS+VIII+08'"><span>DPS VIII - 08</span></button>
+        <button class="btn-card" onclick="selectDPS('DPS Kelas VIII - 09')"><img src="DPS_8_09.png" onerror="this.src='https://via.placeholder.com/140x180?text=DPS+VIII+09'"><span>DPS VIII - 09</span></button>
+        <button class="btn-card" onclick="selectDPS('DPS Kelas VIII - 10')"><img src="DPS_8_10.png" onerror="this.src='https://via.placeholder.com/140x180?text=DPS+VIII+10'"><span>DPS VIII - 10</span></button>
       </div>
     </div>
 
@@ -104,16 +138,16 @@
     <div id="dpsKandidat9" class="option-container">
       <p style="margin:0 0 10px 0; font-weight:bold; color:#28a745;">Pilih 1 Kandidat DPS Kelas IX:</p>
       <div class="grid-options">
-        <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas IX - 01')">DPS IX - 01</button>
-        <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas IX - 02')">DPS IX - 02</button>
-        <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas IX - 03')">DPS IX - 03</button>
-        <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas IX - 04')">DPS IX - 04</button>
-        <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas IX - 05')">DPS IX - 05</button>
-        <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas IX - 06')">DPS IX - 06</button>
-        <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas IX - 07')">DPS IX - 07</button>
-        <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas IX - 08')">DPS IX - 08</button>
-        <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas IX - 09')">DPS IX - 09</button>
-        <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas IX - 10')">DPS IX - 10</button>
+        <button class="btn-card" onclick="selectDPS('DPS Kelas IX - 01')"><img src="DPS_9_01.png" onerror="this.src='https://via.placeholder.com/140x180?text=DPS+IX+01'"><span>DPS IX - 01</span></button>
+        <button class="btn-card" onclick="selectDPS('DPS Kelas IX - 02')"><img src="DPS_9_02.png" onerror="this.src='https://via.placeholder.com/140x180?text=DPS+IX+02'"><span>DPS IX - 02</span></button>
+        <button class="btn-card" onclick="selectDPS('DPS Kelas IX - 03')"><img src="DPS_9_03.png" onerror="this.src='https://via.placeholder.com/140x180?text=DPS+IX+03'"><span>DPS IX - 03</span></button>
+        <button class="btn-card" onclick="selectDPS('DPS Kelas IX - 04')"><img src="DPS_9_04.png" onerror="this.src='https://via.placeholder.com/140x180?text=DPS+IX+04'"><span>DPS IX - 04</span></button>
+        <button class="btn-card" onclick="selectDPS('DPS Kelas IX - 05')"><img src="DPS_9_05.png" onerror="this.src='https://via.placeholder.com/140x180?text=DPS+IX+05'"><span>DPS IX - 05</span></button>
+        <button class="btn-card" onclick="selectDPS('DPS Kelas IX - 06')"><img src="DPS_9_06.png" onerror="this.src='https://via.placeholder.com/140x180?text=DPS+IX+06'"><span>DPS IX - 06</span></button>
+        <button class="btn-card" onclick="selectDPS('DPS Kelas IX - 07')"><img src="DPS_9_07.png" onerror="this.src='https://via.placeholder.com/140x180?text=DPS+IX+07'"><span>DPS IX - 07</span></button>
+        <button class="btn-card" onclick="selectDPS('DPS Kelas IX - 08')"><img src="DPS_9_08.png" onerror="this.src='https://via.placeholder.com/140x180?text=DPS+IX+08'"><span>DPS IX - 08</span></button>
+        <button class="btn-card" onclick="selectDPS('DPS Kelas IX - 09')"><img src="DPS_9_09.png" onerror="this.src='https://via.placeholder.com/140x180?text=DPS+IX+09'"><span>DPS IX - 09</span></button>
+        <button class="btn-card" onclick="selectDPS('DPS Kelas IX - 10')"><img src="DPS_9_10.png" onerror="this.src='https://via.placeholder.com/140x180?text=DPS+IX+10'"><span>DPS IX - 10</span></button>
       </div>
     </div>
 
@@ -124,12 +158,11 @@
       <p style="margin: 4px 0;"><b>Pilihan DPS:</b> <span id="valDPS" style="color:#0275d8; font-weight:bold;">-</span></p>
     </div>
 
-    <!-- Pesan Status Error / Sukses -->
+    <!-- Pesan Status -->
     <div id="statusBox" class="status-box"></div>
   </div>
 
   <script>
-    // URL Web App Google Apps Script milikmu
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbydZY0nCg1PeUKZacSPdjI8SOH6MwdLD8CKoc7_7ku5AWOJ_hQMBLdl1g6CqMeLw3GOGQ/exec";
 
     let step = 1;
@@ -153,27 +186,19 @@
 
     function onScanSuccess(decodedText) {
       if (step === 1) {
-        // Langkah 1: Simpan ID Pemilih
         voteData.idPemilih = decodedText;
         document.getElementById("valPemilih").innerText = decodedText;
         
-        // Ambil angka dari teks ID Pemilih (contoh: "P-045" -> 45)
         let matched = decodedText.match(/\d+/);
-        if (matched) {
-          voterNumber = parseInt(matched[0], 10);
-        } else {
-          voterNumber = 0;
-        }
+        voterNumber = matched ? parseInt(matched[0], 10) : 0;
 
         step = 2;
         document.getElementById("stepText").innerText = "Langkah 2: Scan QR Code Kategori Ketua & Wakil";
       } else if (step === 2) {
-        // Langkah 2: Buka Pilihan Ketua
         document.getElementById("reader").style.display = "none";
         document.getElementById("ketuaOptions").style.display = "flex";
         document.getElementById("stepText").innerText = "Silakan Pilih Paslon Ketua & Wakil";
       } else if (step === 3) {
-        // Langkah 3: Buka Pilihan DPS Berdasarkan Nomor Urut
         document.getElementById("reader").style.display = "none";
         
         if (voterNumber >= 1 && voterNumber <= 150) {
@@ -186,7 +211,6 @@
           document.getElementById("dpsKandidat9").style.display = "flex";
           document.getElementById("stepText").innerText = "Silakan Pilih DPS Kelas IX";
         } else {
-          // Default jika nomor urut tidak terdeteksi dalam rentang
           document.getElementById("dpsKandidat7").style.display = "flex";
           document.getElementById("stepText").innerText = "Silakan Pilih DPS";
         }
@@ -236,7 +260,6 @@
       });
     }
 
-    // Inisialisasi Scanner Kamera
     html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
     html5QrcodeScanner.render(onScanSuccess);
   </script>
