@@ -1,43 +1,105 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-  <title>Real-time Grafik Pemilihan</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistem E-Voting Pemira</title>
+  <!-- Library Kamera Barcode / QR Code Scanner -->
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #eef2f5; padding: 20px; margin: 0; }
+    .card { background: white; max-width: 500px; margin: 30px auto; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    h2 { color: #333; margin-bottom: 20px; }
+    .step-indicator { font-weight: bold; color: #0275d8; font-size: 1.1em; background: #e7f1ff; padding: 10px; border-radius: 8px; margin-bottom: 15px; }
+    #reader { width: 100%; border-radius: 8px; overflow: hidden; margin-top: 15px; }
+    .info-box { margin-top: 20px; text-align: left; background: #f8f9fa; padding: 12px 15px; border-radius: 8px; font-size: 0.95em; }
+    .status-box { margin-top: 15px; padding: 12px; border-radius: 8px; font-weight: bold; display: none; }
+    .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+  </style>
 </head>
 <body>
-  <h2>Hasil Pemilihan Ketua & Wakil Ketua</h2>
-  <canvas id="chartKetua" width="400" height="200"></canvas>
+
+  <div class="card">
+    <h2>E-Voting Pemira Online</h2>
+    <div id="stepText" class="step-indicator">Langkah 1: Scan Barcode / QR Code Pemilih Anda</div>
+    
+    <div id="reader"></div>
+
+    <div class="info-box">
+      <p style="margin: 5px 0;"><b>ID Pemilih:</b> <span id="valPemilih" style="color:#0275d8;">-</span></p>
+      <p style="margin: 5px 0;"><b>Pilihan Ketua:</b> <span id="valKetua" style="color:#0275d8;">-</span></p>
+      <p style="margin: 5px 0;"><b>Pilihan DPS:</b> <span id="valDPS" style="color:#0275d8;">-</span></p>
+    </div>
+
+    <div id="statusBox" class="status-box"></div>
+  </div>
 
   <script>
-    const webAppUrl = "URL_WEB_APP_GOOGLE_SCRIPT_ANDA";
+    // URL Web App Google Apps Script Anda
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbydZY0nCg1PeUKZacSPdjI8SOH6MwdLD8CKoc7_7ku5AWOJ_hQMBLdl1g6CqMeLw3GOGQ/exec";
 
-    async function loadData() {
-      const response = await fetch(webAppUrl);
-      const data = await response.json();
-      
-      // Hitung perolehan suara (contoh sederhana)
-      let rekap = {};
-      for (let i = 1; i < data.length; i++) {
-        let pilihan = data[i][2]; // Kolom C: Pilihan_Ketua
-        rekap[pilihan] = (rekap[pilihan] || 0) + 1;
-      }
+    let step = 1;
+    let voteData = { idPemilih: "", pilihanKetua: "", pilihanDPS: "" };
+    let html5QrcodeScanner;
 
-      // Render Grafik
-      new Chart(document.getElementById('chartKetua'), {
-        type: 'bar',
-        data: {
-          labels: Object.keys(rekap),
-          datasets: [{
-            label: 'Jumlah Suara',
-            data: Object.values(rekap),
-            backgroundColor: ['#36A2EB', '#FF6384', '#FFCE56']
-          }]
+    function showStatus(msg, isSuccess) {
+      const box = document.getElementById("statusBox");
+      box.innerText = msg;
+      box.className = "status-box " + (isSuccess ? "success" : "error");
+      box.style.display = "block";
+    }
+
+    function onScanSuccess(decodedText) {
+      if (step === 1) {
+        voteData.idPemilih = decodedText;
+        document.getElementById("valPemilih").innerText = decodedText;
+        step = 2;
+        document.getElementById("stepText").innerText = "Langkah 2: Scan Barcode Pilihan Ketua & Wakil Ketua";
+      } else if (step === 2) {
+        voteData.pilihanKetua = decodedText;
+        document.getElementById("valKetua").innerText = decodedText;
+        step = 3;
+        document.getElementById("stepText").innerText = "Langkah 3: Scan Barcode Pilihan DPS";
+      } else if (step === 3) {
+        voteData.pilihanDPS = decodedText;
+        document.getElementById("valDPS").innerText = decodedText;
+        step = 4;
+        
+        // Matikan Kamera
+        if(html5QrcodeScanner) {
+          html5QrcodeScanner.clear();
         }
+        
+        document.getElementById("stepText").innerText = "Mengirim Suara ke Database...";
+        submitVote();
+      }
+    }
+
+    function submitVote() {
+      fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify(voteData)
+      })
+      .then(res => res.json())
+      .then(response => {
+        if(response.status === "success") {
+          showStatus("Suara Anda berhasil disimpan! Terima kasih.", true);
+          setTimeout(() => { location.reload(); }, 3000); // Reset ke awal setelah 3 detik
+        } else {
+          showStatus("Gagal: " + response.message, false);
+          setTimeout(() => { location.reload(); }, 4000);
+        }
+      })
+      .catch(err => {
+        showStatus("Terjadi kesalahan koneksi internet.", false);
+        setTimeout(() => { location.reload(); }, 4000);
       });
     }
 
-    loadData();
-    setInterval(loadData, 5000); // Refresh otomatis setiap 5 detik
+    // Jalankan Scanner Kamera
+    html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+    html5QrcodeScanner.render(onScanSuccess);
   </script>
 </body>
 </html>
