@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Real-Time Hasil Pemira</title>
+  <!-- Library Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; margin: 0; padding: 20px; text-align: center; }
+    h1 { color: #333; margin-bottom: 5px; }
+    p { color: #666; font-size: 0.95em; }
+    .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 25px; }
+    .chart-box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); width: 45%; min-width: 320px; }
+  </style>
+</head>
+<body>
+
+  <h1>Live Count Hasil Pemilihan Online</h1>
+  <p>Data diperbarui secara otomatis setiap 5 detik dari Google Sheets</p>
+
+  <div class="container">
+    <div class="chart-box">
+      <h3>Hasil Pemilihan Ketua & Wakil Ketua</h3>
+      <canvas id="chartKetua"></canvas>
+    </div>
+    <div class="chart-box">
+      <h3>Hasil Pemilihan DPS</h3>
+      <canvas id="chartDPS"></canvas>
+    </div>
+  </div>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbydZY0nCg1PeUKZacSPdjI8SOH6MwdLD8CKoc7_7ku5AWOJ_hQMBLdl1g6CqMeLw3GOGQ/exec";
+    let chartKetuaObj = null;
+    let chartDPSObj = null;
+
+    async function fetchData() {
+      try {
+        const res = await fetch(SCRIPT_URL);
+        const json = await res.json();
+        if(json.status === "success") {
+          processAndRender(json.data);
+        }
+      } catch(e) {
+        console.error("Gagal mengambil data dari Google Sheets:", e);
+      }
+    }
+
+    function processAndRender(rows) {
+      let countKetua = {};
+      let countDPS = {};
+
+      // Iterasi mulai dari index 1 untuk melompati Header Tabel
+      for (let i = 1; i < rows.length; i++) {
+        let ketua = rows[i][2]; // Kolom C
+        let dps = rows[i][3];   // Kolom D
+
+        if(ketua) countKetua[ketua] = (countKetua[ketua] || 0) + 1;
+        if(dps) countDPS[dps] = (countDPS[dps] || 0) + 1;
+      }
+
+      // Render Kedua Grafik
+      renderChart('chartKetua', chartKetuaObj, countKetua, (obj) => chartKetuaObj = obj, 'Ketua & Wakil');
+      renderChart('chartDPS', chartDPSObj, countDPS, (obj) => chartDPSObj = obj, 'DPS');
+    }
+
+    function renderChart(canvasId, chartInstance, dataObj, setInstance, labelName) {
+      const labels = Object.keys(dataObj);
+      const values = Object.values(dataObj);
+
+      if (chartInstance) {
+        // Jika grafik sudah ada, tinggal update datanya
+        chartInstance.data.labels = labels;
+        chartInstance.data.datasets[0].data = values;
+        chartInstance.update();
+      } else {
+        // Jika grafik belum ada, buat grafik baru
+        const ctx = document.getElementById(canvasId).getContext('2d');
+        const newChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Jumlah Suara ' + labelName,
+              data: values,
+              backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6f42c1']
+            }]
+          },
+          options: { 
+            responsive: true, 
+            scales: { 
+              y: { 
+                beginAtZero: true, 
+                ticks: { stepSize: 1 } 
+              } 
+            } 
+          }
+        });
+        setInstance(newChart);
+      }
+    }
+
+    // Jalankan pertama kali & auto refresh tiap 5 detik (5000 ms)
+    fetchData();
+    setInterval(fetchData, 5000);
+  </script>
+</body>
+</html>
