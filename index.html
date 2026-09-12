@@ -12,7 +12,6 @@
     .step-indicator { font-weight: bold; color: #0275d8; font-size: 1.1em; background: #e7f1ff; padding: 12px; border-radius: 8px; margin-bottom: 15px; }
     #reader { width: 100%; border-radius: 8px; overflow: hidden; margin-top: 15px; }
     
-    /* Grid Tombol Pilihan */
     .option-container { display: none; flex-direction: column; gap: 10px; margin-top: 15px; max-height: 350px; overflow-y: auto; padding-right: 5px; }
     .grid-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     
@@ -20,7 +19,6 @@
     .btn-option:hover { background: #0056b3; }
     .btn-dps { background: #28a745; }
     .btn-dps:hover { background: #1e7e34; }
-    .btn-back { background: #6c757d; margin-top: 10px; }
     
     .info-box { margin-top: 20px; text-align: left; background: #f8f9fa; padding: 12px 15px; border-radius: 8px; font-size: 0.95em; }
     .status-box { margin-top: 15px; padding: 12px; border-radius: 8px; font-weight: bold; display: none; }
@@ -44,18 +42,9 @@
       <button class="btn-option" onclick="selectKetua('Paslon 03')">Paslon 03 - Ketua C & Wakil C</button>
     </div>
 
-    <!-- 2. Menu Pilih Kelas DPS -->
-    <div id="dpsKelasOptions" class="option-container">
-      <p style="margin:0 0 10px 0; font-weight:bold;">Pilih Tingkat Kelas DPS:</p>
-      <button class="btn-option btn-dps" onclick="showDpsKandidat('7')">Kelas VII (7)</button>
-      <button class="btn-option btn-dps" onclick="showDpsKandidat('8')">Kelas VIII (8)</button>
-      <button class="btn-option btn-dps" onclick="showDpsKandidat('9')">Kelas IX (9)</button>
-    </div>
-
-    <!-- 3. Sub-Menu Kandidat DPS per Kelas -->
-    <!-- Kelas VII (6 DPS) -->
+    <!-- 2. Menu DPS Kelas VII (6 DPS) -->
     <div id="dpsKandidat7" class="option-container">
-      <p style="margin:0 0 10px 0; font-weight:bold;">Pilih DPS Kelas VII:</p>
+      <p style="margin:0 0 10px 0; font-weight:bold; color:#28a745;">Pilih Kandidat DPS Kelas VII:</p>
       <div class="grid-options">
         <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VII - 01')">DPS VII - 01</button>
         <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VII - 02')">DPS VII - 02</button>
@@ -64,12 +53,11 @@
         <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VII - 05')">DPS VII - 05</button>
         <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VII - 06')">DPS VII - 06</button>
       </div>
-      <button class="btn-option btn-back" onclick="backToKelas()">← Kembali Pilih Kelas</button>
     </div>
 
-    <!-- Kelas VIII (10 DPS) -->
+    <!-- 3. Menu DPS Kelas VIII (10 DPS) -->
     <div id="dpsKandidat8" class="option-container">
-      <p style="margin:0 0 10px 0; font-weight:bold;">Pilih DPS Kelas VIII:</p>
+      <p style="margin:0 0 10px 0; font-weight:bold; color:#28a745;">Pilih Kandidat DPS Kelas VIII:</p>
       <div class="grid-options">
         <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VIII - 01')">DPS VIII - 01</button>
         <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VIII - 02')">DPS VIII - 02</button>
@@ -82,12 +70,11 @@
         <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VIII - 09')">DPS VIII - 09</button>
         <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas VIII - 10')">DPS VIII - 10</button>
       </div>
-      <button class="btn-option btn-back" onclick="backToKelas()">← Kembali Pilih Kelas</button>
     </div>
 
-    <!-- Kelas IX (10 DPS) -->
+    <!-- 4. Menu DPS Kelas IX (10 DPS) -->
     <div id="dpsKandidat9" class="option-container">
-      <p style="margin:0 0 10px 0; font-weight:bold;">Pilih DPS Kelas IX:</p>
+      <p style="margin:0 0 10px 0; font-weight:bold; color:#28a745;">Pilih Kandidat DPS Kelas IX:</p>
       <div class="grid-options">
         <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas IX - 01')">DPS IX - 01</button>
         <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas IX - 02')">DPS IX - 02</button>
@@ -100,10 +87,9 @@
         <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas IX - 09')">DPS IX - 09</button>
         <button class="btn-option btn-dps" onclick="selectDPS('DPS Kelas IX - 10')">DPS IX - 10</button>
       </div>
-      <button class="btn-option btn-back" onclick="backToKelas()">← Kembali Pilih Kelas</button>
     </div>
 
-    <!-- Ringkasan Pilihan -->
+    <!-- Ringkasan Info -->
     <div class="info-box">
       <p style="margin: 5px 0;"><b>ID Pemilih:</b> <span id="valPemilih" style="color:#0275d8;">-</span></p>
       <p style="margin: 5px 0;"><b>Pilihan Ketua:</b> <span id="valKetua" style="color:#0275d8;">-</span></p>
@@ -118,11 +104,11 @@
 
     let step = 1;
     let voteData = { idPemilih: "", pilihanKetua: "", pilihanDPS: "" };
+    let voterNumber = 0; // Menampung angka nomor urut pemilih
     let html5QrcodeScanner;
 
     function hideAllMenus() {
       document.getElementById("ketuaOptions").style.display = "none";
-      document.getElementById("dpsKelasOptions").style.display = "none";
       document.getElementById("dpsKandidat7").style.display = "none";
       document.getElementById("dpsKandidat8").style.display = "none";
       document.getElementById("dpsKandidat9").style.display = "none";
@@ -139,16 +125,39 @@
       if (step === 1) {
         voteData.idPemilih = decodedText;
         document.getElementById("valPemilih").innerText = decodedText;
+        
+        // Ekstrak angka dari ID Pemilih (misal: "P-045" -> 45)
+        let matched = decodedText.match(/\d+/);
+        if (matched) {
+          voterNumber = parseInt(matched[0], 10);
+        } else {
+          voterNumber = 0;
+        }
+
         step = 2;
         document.getElementById("stepText").innerText = "Langkah 2: Scan QR Code Kategori Ketua & Wakil";
       } else if (step === 2) {
         document.getElementById("reader").style.display = "none";
         document.getElementById("ketuaOptions").style.display = "flex";
-        document.getElementById("stepText").innerText = "Pilih Paslon Ketua & Wakil";
+        document.getElementById("stepText").innerText = "Silakan Pilih Paslon Ketua & Wakil";
       } else if (step === 3) {
         document.getElementById("reader").style.display = "none";
-        document.getElementById("dpsKelasOptions").style.display = "flex";
-        document.getElementById("stepText").innerText = "Pilih Tingkat Kelas DPS";
+        
+        // Logika Otomatis Menentukan Kelas DPS Berdasarkan Nomor Urut
+        if (voterNumber >= 1 && voterNumber <= 150) {
+          document.getElementById("dpsKandidat7").style.display = "flex";
+          document.getElementById("stepText").innerText = "Silakan Pilih DPS Kelas VII";
+        } else if (voterNumber >= 151 && voterNumber <= 310) {
+          document.getElementById("dpsKandidat8").style.display = "flex";
+          document.getElementById("stepText").innerText = "Silakan Pilih DPS Kelas VIII";
+        } else if (voterNumber >= 311 && voterNumber <= 490) {
+          document.getElementById("dpsKandidat9").style.display = "flex";
+          document.getElementById("stepText").innerText = "Silakan Pilih DPS Kelas IX";
+        } else {
+          // Jika nomor urut di luar rentang, tampilkan Kelas VII sebagai default
+          document.getElementById("dpsKandidat7").style.display = "flex";
+          document.getElementById("stepText").innerText = "Silakan Pilih DPS";
+        }
       }
     }
 
@@ -159,18 +168,6 @@
       document.getElementById("reader").style.display = "block";
       step = 3;
       document.getElementById("stepText").innerText = "Langkah 3: Scan QR Code Kategori DPS";
-    }
-
-    function showDpsKandidat(kelas) {
-      hideAllMenus();
-      document.getElementById("dpsKandidat" + kelas).style.display = "flex";
-      document.getElementById("stepText").innerText = "Pilih Kandidat DPS Kelas " + (kelas === '7' ? 'VII' : kelas === '8' ? 'VIII' : 'IX');
-    }
-
-    function backToKelas() {
-      hideAllMenus();
-      document.getElementById("dpsKelasOptions").style.display = "flex";
-      document.getElementById("stepText").innerText = "Pilih Tingkat Kelas DPS";
     }
 
     function selectDPS(pilihan) {
