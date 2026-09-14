@@ -11,29 +11,28 @@
     h1 { color: #1a252f; margin-bottom: 5px; }
     p { color: #666; font-size: 0.95em; margin-bottom: 30px; }
     
-    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 25px; max-width: 1200px; margin: 0 auto; }
+    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 25px; max-width: 1400px; margin: 0 auto; }
     .card { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 6px 18px rgba(0,0,0,0.06); }
-    .card h2 { color: #2c3e50; margin-top: 0; margin-bottom: 20px; font-size: 1.3em; border-bottom: 2px solid #eef2f5; padding-bottom: 10px; }
+    .card h2 { color: #2c3e50; margin-top: 0; margin-bottom: 20px; font-size: 1.25em; border-bottom: 2px solid #eef2f5; padding-bottom: 10px; }
     
-    /* Display Kartu Kandidat */
+    /* Display Kartu Kandidat Paslon */
     .paslon-photos { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
-    .photo-item { text-align: center; width: 100px; }
-    .photo-item img { width: 100px; height: 130px; border-radius: 8px; object-fit: contain; border: 2px solid #007bff; background: #fff; box-shadow: 0 3px 8px rgba(0,0,0,0.12); }
-    .photo-item span { display: block; font-size: 0.85em; font-weight: bold; margin-top: 6px; color: #333; }
+    .photo-item { text-align: center; width: 90px; }
+    .photo-item img { width: 90px; height: 120px; border-radius: 8px; object-fit: contain; border: 2px solid #007bff; background: #fff; box-shadow: 0 3px 8px rgba(0,0,0,0.12); }
+    .photo-item span { display: block; font-size: 0.8em; font-weight: bold; margin-top: 6px; color: #333; }
     
-    .chart-container { position: relative; width: 100%; max-width: 330px; margin: 0 auto; }
+    .chart-container { position: relative; width: 100%; max-width: 320px; margin: 0 auto; }
   </style>
 </head>
 <body>
 
   <h1>Live Count Hasil Pemilihan Online</h1>
-  <p>Data grafik diperbarui secara otomatis dari Google Sheets</p>
+  <p>Data grafik otomatis diperbarui setiap 15 menit sekali</p>
 
   <div class="dashboard-grid">
-    <!-- Card Grafik Paslon Ketua -->
+    <!-- 1. Card Grafik Paslon Ketua -->
     <div class="card">
-      <h2>Perolehan Suara Ketua & Wakil Ketua</h2>
-      
+      <h2>Hasil Suara Ketua & Wakil Ketua</h2>
       <div class="paslon-photos">
         <div class="photo-item">
           <img src="Paslon%20Kelas%2001.png" alt="Paslon 01">
@@ -48,17 +47,32 @@
           <span>Paslon 03</span>
         </div>
       </div>
-
       <div class="chart-container">
         <canvas id="chartKetua"></canvas>
       </div>
     </div>
 
-    <!-- Card Grafik DPS -->
+    <!-- 2. Card Grafik DPS Kelas VII -->
     <div class="card">
-      <h2>Perolehan Suara DPS</h2>
+      <h2>Hasil Suara DPS Kelas VII</h2>
       <div class="chart-container">
-        <canvas id="chartDPS"></canvas>
+        <canvas id="chartDPS7"></canvas>
+      </div>
+    </div>
+
+    <!-- 3. Card Grafik DPS Kelas VIII -->
+    <div class="card">
+      <h2>Hasil Suara DPS Kelas VIII</h2>
+      <div class="chart-container">
+        <canvas id="chartDPS8"></canvas>
+      </div>
+    </div>
+
+    <!-- 4. Card Grafik DPS Kelas IX -->
+    <div class="card">
+      <h2>Hasil Suara DPS Kelas IX</h2>
+      <div class="chart-container">
+        <canvas id="chartDPS9"></canvas>
       </div>
     </div>
   </div>
@@ -69,7 +83,14 @@
     Chart.register(ChartDataLabels);
 
     let chartKetuaObj = null;
-    let chartDPSObj = null;
+    let chartDPS7Obj = null;
+    let chartDPS8Obj = null;
+    let chartDPS9Obj = null;
+
+    const paletteColors = [
+      '#007bff', '#28a745', '#ffc107', '#dc3545', '#17a2b8', 
+      '#6f42c1', '#fd7e14', '#e83e8c', '#20c997', '#6c757d', '#343a40'
+    ];
 
     async function fetchData() {
       try {
@@ -79,27 +100,43 @@
           processAndRender(json.data);
         }
       } catch(e) {
-        console.error("Gagal mengambil data dari Google Sheets:", e);
+        console.error("Gagal mengambil data:", e);
       }
     }
 
     function processAndRender(rows) {
       let countKetua = {};
-      let countDPS = {};
+      let countDPS7 = {};
+      let countDPS8 = {};
+      let countDPS9 = {};
 
       for (let i = 1; i < rows.length; i++) {
         let ketua = rows[i][2]; // Kolom C
         let dps = rows[i][3];   // Kolom D
 
+        // Hitung Ketua
         if(ketua) countKetua[ketua] = (countKetua[ketua] || 0) + 1;
-        if(dps) countDPS[dps] = (countDPS[dps] || 0) + 1;
+
+        // Pisahkan DPS berdasarkan Kelas
+        if(dps) {
+          if(dps.includes("Kelas VII")) {
+            countDPS7[dps] = (countDPS7[dps] || 0) + 1;
+          } else if(dps.includes("Kelas VIII")) {
+            countDPS8[dps] = (countDPS8[dps] || 0) + 1;
+          } else if(dps.includes("Kelas IX")) {
+            countDPS9[dps] = (countDPS9[dps] || 0) + 1;
+          }
+        }
       }
 
-      renderPieChart('chartKetua', chartKetuaObj, countKetua, (obj) => chartKetuaObj = obj, ['#007bff', '#ffc107', '#dc3545', '#17a2b8', '#6c757d']);
-      renderPieChart('chartDPS', chartDPSObj, countDPS, (obj) => chartDPSObj = obj, ['#28a745', '#fd7e14', '#6f42c1', '#e83e8c', '#20c997', '#ffc107', '#007bff', '#17a2b8']);
+      // Render ke 4 grafik terpisah
+      renderPieChart('chartKetua', chartKetuaObj, countKetua, (obj) => chartKetuaObj = obj);
+      renderPieChart('chartDPS7', chartDPS7Obj, countDPS7, (obj) => chartDPS7Obj = obj);
+      renderPieChart('chartDPS8', chartDPS8Obj, countDPS8, (obj) => chartDPS8Obj = obj);
+      renderPieChart('chartDPS9', chartDPS9Obj, countDPS9, (obj) => chartDPS9Obj = obj);
     }
 
-    function renderPieChart(canvasId, chartInstance, dataObj, setInstance, colors) {
+    function renderPieChart(canvasId, chartInstance, dataObj, setInstance) {
       const labels = Object.keys(dataObj);
       const values = Object.values(dataObj);
 
@@ -115,7 +152,7 @@
             labels: labels,
             datasets: [{
               data: values,
-              backgroundColor: colors
+              backgroundColor: paletteColors.slice(0, labels.length)
             }]
           },
           options: {
@@ -124,7 +161,7 @@
               legend: { position: 'bottom' },
               datalabels: {
                 color: '#fff',
-                font: { weight: 'bold', size: 13 },
+                font: { weight: 'bold', size: 12 },
                 formatter: (value, ctx) => {
                   let sum = 0;
                   let dataArr = ctx.chart.data.datasets[0].data;
@@ -140,8 +177,11 @@
       }
     }
 
+    // Jalankan pertama kali saat halaman dibuka
     fetchData();
-    setInterval(fetchData, 5000);
+
+    // Auto-refresh setiap 15 menit (15 * 60 * 1000 ms = 900.000 ms)
+    setInterval(fetchData, 900000);
   </script>
 </body>
 </html>
