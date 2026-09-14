@@ -7,38 +7,78 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
   <style>
+    * { box-sizing: border-box; }
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; text-align: center; }
     h1 { color: #1a252f; margin-bottom: 5px; }
-    p { color: #666; font-size: 0.95em; margin-bottom: 30px; }
+    p { color: #666; font-size: 0.95em; margin-bottom: 25px; }
     
-    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 25px; max-width: 1400px; margin: 0 auto; }
-    .card { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 6px 18px rgba(0,0,0,0.06); }
-    .card h2 { color: #2c3e50; margin-top: 0; margin-bottom: 15px; font-size: 1.25em; border-bottom: 2px solid #eef2f5; padding-bottom: 10px; }
+    /* Layout Kartu Dashboard Utama */
+    .dashboard-grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); 
+      gap: 25px; 
+      max-width: 1600px; 
+      margin: 0 auto; 
+    }
     
-    /* Container Foto Kartu Kandidat */
+    .card { 
+      background: white; 
+      padding: 20px; 
+      border-radius: 16px; 
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06); 
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .card h2 { 
+      color: #2c3e50; 
+      margin-top: 0; 
+      margin-bottom: 15px; 
+      font-size: 1.2em; 
+      border-bottom: 2px solid #eef2f5; 
+      padding-bottom: 10px; 
+      width: 100%;
+    }
+    
+    /* Display Kartu Foto Berjejer Full (Tanpa Scroll) */
     .kandidat-photos {
       display: flex;
       justify-content: center;
-      gap: 10px;
+      align-items: flex-start;
+      gap: 8px;
       margin-bottom: 20px;
-      flex-wrap: wrap;
-      max-height: 220px;
-      overflow-y: auto;
-      padding: 5px;
+      flex-wrap: wrap; /* Foto akan otomatis turun ke baris baru dengan rapi jika penuh */
+      width: 100%;
     }
-    .photo-item { text-align: center; width: 75px; }
+    
+    .photo-item { 
+      text-align: center; 
+      width: 65px; 
+    }
     .photo-item img {
-      width: 75px;
-      height: 100px;
+      width: 65px;
+      height: 90px;
       border-radius: 6px;
       object-fit: contain;
       border: 1.5px solid #007bff;
       background: #fff;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      display: block;
     }
-    .photo-item span { display: block; font-size: 0.75em; font-weight: bold; margin-top: 4px; color: #333; }
+    .photo-item span { 
+      display: block; 
+      font-size: 0.72em; 
+      font-weight: bold; 
+      margin-top: 4px; 
+      color: #333; 
+    }
     
-    .chart-container { position: relative; width: 100%; max-width: 320px; margin: 0 auto; }
+    .chart-container { 
+      position: relative; 
+      width: 100%; 
+      max-width: 300px; 
+      margin-top: auto; /* Memastikan chart berada di posisi bawah secara seimbang */
+    }
   </style>
 </head>
 <body>
@@ -64,12 +104,12 @@
     <div class="card">
       <h2>Hasil Suara DPS Kelas VII</h2>
       <div class="kandidat-photos">
-        <div class="photo-item"><img src="DPS_7_01.png" onerror="this.src='https://via.placeholder.com/75x100?text=VII-01'"><span>VII-01</span></div>
-        <div class="photo-item"><img src="DPS_7_02.png" onerror="this.src='https://via.placeholder.com/75x100?text=VII-02'"><span>VII-02</span></div>
-        <div class="photo-item"><img src="DPS_7_03.png" onerror="this.src='https://via.placeholder.com/75x100?text=VII-03'"><span>VII-03</span></div>
-        <div class="photo-item"><img src="DPS_7_04.png" onerror="this.src='https://via.placeholder.com/75x100?text=VII-04'"><span>VII-04</span></div>
-        <div class="photo-item"><img src="DPS_7_05.png" onerror="this.src='https://via.placeholder.com/75x100?text=VII-05'"><span>VII-05</span></div>
-        <div class="photo-item"><img src="DPS_7_06.png" onerror="this.src='https://via.placeholder.com/75x100?text=VII-06'"><span>VII-06</span></div>
+        <div class="photo-item"><img src="DPS_7_01.png" onerror="this.src='https://via.placeholder.com/65x90?text=VII-01'"><span>VII-01</span></div>
+        <div class="photo-item"><img src="DPS_7_02.png" onerror="this.src='https://via.placeholder.com/65x90?text=VII-02'"><span>VII-02</span></div>
+        <div class="photo-item"><img src="DPS_7_03.png" onerror="this.src='https://via.placeholder.com/65x90?text=VII-03'"><span>VII-03</span></div>
+        <div class="photo-item"><img src="DPS_7_04.png" onerror="this.src='https://via.placeholder.com/65x90?text=VII-04'"><span>VII-04</span></div>
+        <div class="photo-item"><img src="DPS_7_05.png" onerror="this.src='https://via.placeholder.com/65x90?text=VII-05'"><span>VII-05</span></div>
+        <div class="photo-item"><img src="DPS_7_06.png" onerror="this.src='https://via.placeholder.com/65x90?text=VII-06'"><span>VII-06</span></div>
       </div>
       <div class="chart-container">
         <canvas id="chartDPS7"></canvas>
@@ -80,17 +120,17 @@
     <div class="card">
       <h2>Hasil Suara DPS Kelas VIII</h2>
       <div class="kandidat-photos">
-        <div class="photo-item"><img src="DPS_8_01.png" onerror="this.src='https://via.placeholder.com/75x100?text=VIII-01'"><span>VIII-01</span></div>
-        <div class="photo-item"><img src="DPS_8_02.png" onerror="this.src='https://via.placeholder.com/75x100?text=VIII-02'"><span>VIII-02</span></div>
-        <div class="photo-item"><img src="DPS_8_03.png" onerror="this.src='https://via.placeholder.com/75x100?text=VIII-03'"><span>VIII-03</span></div>
-        <div class="photo-item"><img src="DPS_8_04.png" onerror="this.src='https://via.placeholder.com/75x100?text=VIII-04'"><span>VIII-04</span></div>
-        <div class="photo-item"><img src="DPS_8_05.png" onerror="this.src='https://via.placeholder.com/75x100?text=VIII-05'"><span>VIII-05</span></div>
-        <div class="photo-item"><img src="DPS_8_06.png" onerror="this.src='https://via.placeholder.com/75x100?text=VIII-06'"><span>VIII-06</span></div>
-        <div class="photo-item"><img src="DPS_8_07.png" onerror="this.src='https://via.placeholder.com/75x100?text=VIII-07'"><span>VIII-07</span></div>
-        <div class="photo-item"><img src="DPS_8_08.png" onerror="this.src='https://via.placeholder.com/75x100?text=VIII-08'"><span>VIII-08</span></div>
-        <div class="photo-item"><img src="DPS_8_09.png" onerror="this.src='https://via.placeholder.com/75x100?text=VIII-09'"><span>VIII-09</span></div>
-        <div class="photo-item"><img src="DPS_8_10.png" onerror="this.src='https://via.placeholder.com/75x100?text=VIII-10'"><span>VIII-10</span></div>
-        <div class="photo-item"><img src="DPS_8_11.png" onerror="this.src='https://via.placeholder.com/75x100?text=VIII-11'"><span>VIII-11</span></div>
+        <div class="photo-item"><img src="DPS_8_01.png" onerror="this.src='https://via.placeholder.com/65x90?text=VIII-01'"><span>VIII-01</span></div>
+        <div class="photo-item"><img src="DPS_8_02.png" onerror="this.src='https://via.placeholder.com/65x90?text=VIII-02'"><span>VIII-02</span></div>
+        <div class="photo-item"><img src="DPS_8_03.png" onerror="this.src='https://via.placeholder.com/65x90?text=VIII-03'"><span>VIII-03</span></div>
+        <div class="photo-item"><img src="DPS_8_04.png" onerror="this.src='https://via.placeholder.com/65x90?text=VIII-04'"><span>VIII-04</span></div>
+        <div class="photo-item"><img src="DPS_8_05.png" onerror="this.src='https://via.placeholder.com/65x90?text=VIII-05'"><span>VIII-05</span></div>
+        <div class="photo-item"><img src="DPS_8_06.png" onerror="this.src='https://via.placeholder.com/65x90?text=VIII-06'"><span>VIII-06</span></div>
+        <div class="photo-item"><img src="DPS_8_07.png" onerror="this.src='https://via.placeholder.com/65x90?text=VIII-07'"><span>VIII-07</span></div>
+        <div class="photo-item"><img src="DPS_8_08.png" onerror="this.src='https://via.placeholder.com/65x90?text=VIII-08'"><span>VIII-08</span></div>
+        <div class="photo-item"><img src="DPS_8_09.png" onerror="this.src='https://via.placeholder.com/65x90?text=VIII-09'"><span>VIII-09</span></div>
+        <div class="photo-item"><img src="DPS_8_10.png" onerror="this.src='https://via.placeholder.com/65x90?text=VIII-10'"><span>VIII-10</span></div>
+        <div class="photo-item"><img src="DPS_8_11.png" onerror="this.src='https://via.placeholder.com/65x90?text=VIII-11'"><span>VIII-11</span></div>
       </div>
       <div class="chart-container">
         <canvas id="chartDPS8"></canvas>
@@ -101,16 +141,16 @@
     <div class="card">
       <h2>Hasil Suara DPS Kelas IX</h2>
       <div class="kandidat-photos">
-        <div class="photo-item"><img src="DPS_9_01.png" onerror="this.src='https://via.placeholder.com/75x100?text=IX-01'"><span>IX-01</span></div>
-        <div class="photo-item"><img src="DPS_9_02.png" onerror="this.src='https://via.placeholder.com/75x100?text=IX-02'"><span>IX-02</span></div>
-        <div class="photo-item"><img src="DPS_9_03.png" onerror="this.src='https://via.placeholder.com/75x100?text=IX-03'"><span>IX-03</span></div>
-        <div class="photo-item"><img src="DPS_9_04.png" onerror="this.src='https://via.placeholder.com/75x100?text=IX-04'"><span>IX-04</span></div>
-        <div class="photo-item"><img src="DPS_9_05.png" onerror="this.src='https://via.placeholder.com/75x100?text=IX-05'"><span>IX-05</span></div>
-        <div class="photo-item"><img src="DPS_9_06.png" onerror="this.src='https://via.placeholder.com/75x100?text=IX-06'"><span>IX-06</span></div>
-        <div class="photo-item"><img src="DPS_9_07.png" onerror="this.src='https://via.placeholder.com/75x100?text=IX-07'"><span>IX-07</span></div>
-        <div class="photo-item"><img src="DPS_9_08.png" onerror="this.src='https://via.placeholder.com/75x100?text=IX-08'"><span>IX-08</span></div>
-        <div class="photo-item"><img src="DPS_9_09.png" onerror="this.src='https://via.placeholder.com/75x100?text=IX-09'"><span>IX-09</span></div>
-        <div class="photo-item"><img src="DPS_9_10.png" onerror="this.src='https://via.placeholder.com/75x100?text=IX-10'"><span>IX-10</span></div>
+        <div class="photo-item"><img src="DPS_9_01.png" onerror="this.src='https://via.placeholder.com/65x90?text=IX-01'"><span>IX-01</span></div>
+        <div class="photo-item"><img src="DPS_9_02.png" onerror="this.src='https://via.placeholder.com/65x90?text=IX-02'"><span>IX-02</span></div>
+        <div class="photo-item"><img src="DPS_9_03.png" onerror="this.src='https://via.placeholder.com/65x90?text=IX-03'"><span>IX-03</span></div>
+        <div class="photo-item"><img src="DPS_9_04.png" onerror="this.src='https://via.placeholder.com/65x90?text=IX-04'"><span>IX-04</span></div>
+        <div class="photo-item"><img src="DPS_9_05.png" onerror="this.src='https://via.placeholder.com/65x90?text=IX-05'"><span>IX-05</span></div>
+        <div class="photo-item"><img src="DPS_9_06.png" onerror="this.src='https://via.placeholder.com/65x90?text=IX-06'"><span>IX-06</span></div>
+        <div class="photo-item"><img src="DPS_9_07.png" onerror="this.src='https://via.placeholder.com/65x90?text=IX-07'"><span>IX-07</span></div>
+        <div class="photo-item"><img src="DPS_9_08.png" onerror="this.src='https://via.placeholder.com/65x90?text=IX-08'"><span>IX-08</span></div>
+        <div class="photo-item"><img src="DPS_9_09.png" onerror="this.src='https://via.placeholder.com/65x90?text=IX-09'"><span>IX-09</span></div>
+        <div class="photo-item"><img src="DPS_9_10.png" onerror="this.src='https://via.placeholder.com/65x90?text=IX-10'"><span>IX-10</span></div>
       </div>
       <div class="chart-container">
         <canvas id="chartDPS9"></canvas>
@@ -216,7 +256,6 @@
     }
 
     fetchData();
-    // Auto refresh 15 menit sekali
     setInterval(fetchData, 900000);
   </script>
 </body>
